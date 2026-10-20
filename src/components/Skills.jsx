@@ -1,44 +1,94 @@
+import { useState } from 'react'
 import { Code2, Smartphone, ShieldCheck, Wrench, Database, GraduationCap } from 'lucide-react'
 import { skills } from '../data/portfolio'
 import { useInView } from '../hooks/useInView'
+import { useTilt } from '../hooks/useTilt'
 
 const iconMap = { Code2, Smartphone, ShieldCheck, Wrench, Database, GraduationCap }
 
-// Light colors are readable on white; dark colors pop on navy
-const colorMap = {
-  '#00E5FF': {
-    bg:     'bg-[#0099CC11] dark:bg-[#00E5FF11]',
-    border: 'border-[#0099CC33] dark:border-[#00E5FF33]',
-    text:   'text-[#0077AA] dark:text-[#00E5FF]',
-    badge:  'bg-[#0099CC0D] dark:bg-[#00E5FF11] border-[#0099CC22] dark:border-[#00E5FF22] text-[#0077AA] dark:text-[#00E5FF]',
-    line:   '#0099CC',
-  },
-  '#8B5CF6': {
-    bg:     'bg-[#7C3AED11] dark:bg-[#8B5CF611]',
-    border: 'border-[#7C3AED33] dark:border-[#8B5CF633]',
-    text:   'text-[#6D28D9] dark:text-[#8B5CF6]',
-    badge:  'bg-[#7C3AED0D] dark:bg-[#8B5CF611] border-[#7C3AED22] dark:border-[#8B5CF622] text-[#6D28D9] dark:text-[#8B5CF6]',
-    line:   '#7C3AED',
-  },
-  '#FF4D8D': {
-    bg:     'bg-[#e0396e11] dark:bg-[#FF4D8D11]',
-    border: 'border-[#e0396e33] dark:border-[#FF4D8D33]',
-    text:   'text-[#c0185a] dark:text-[#FF4D8D]',
-    badge:  'bg-[#e0396e0D] dark:bg-[#FF4D8D11] border-[#e0396e22] dark:border-[#FF4D8D22] text-[#c0185a] dark:text-[#FF4D8D]',
-    line:   '#e0396e',
-  },
+function SkillCard({ group, idx }) {
+  const [hovered, setHovered] = useState(false)
+  const { ref, onMouseMove, onMouseLeave: tiltLeave } = useTilt(5)
+  const Icon = iconMap[group.icon]
+
+  return (
+    <div
+      ref={ref}
+      role="listitem"
+      onMouseMove={onMouseMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={(e) => { setHovered(false); tiltLeave(e) }}
+      className="card-hover p-6 flex flex-col gap-4 group animate-fade-in-up"
+      style={{ animationDelay: `${idx * 80}ms`, animationFillMode: 'both' }}
+    >
+      {/* Mouse spotlight */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
+        style={{
+          opacity: hovered ? 1 : 0,
+          background: 'radial-gradient(300px circle at var(--mouse-x,50%) var(--mouse-y,50%), rgba(30,58,95,0.07), transparent 60%)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center
+                     bg-[#1E3A5F0D] dark:bg-[#1E3A5F33]
+                     border border-[#1E3A5F1A] dark:border-[#2A529855]
+                     group-hover:bg-[#1E3A5F18] dark:group-hover:bg-[#1E3A5F44]
+                     group-hover:scale-110 transition-all duration-300"
+        >
+          {Icon && <Icon size={19} className="text-[#1E3A5F] dark:text-[#7BBFFF]" aria-hidden="true" />}
+        </div>
+        <h3 className="font-bold text-[#0A0A0A] dark:text-white text-sm">{group.category}</h3>
+        {/* Count bubble */}
+        <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded-full
+                         bg-[#1E3A5F0D] dark:bg-[#1E3A5F33]
+                         border border-[#1E3A5F1A] dark:border-[#2A529844]
+                         text-[#1E3A5F] dark:text-[#7BBFFF]">
+          {group.items.length}
+        </span>
+      </div>
+
+      {/* Badges */}
+      <div className="flex flex-wrap gap-2" role="list" aria-label={`${group.category} skills`}>
+        {group.items.map((skill) => (
+          <span
+            key={skill}
+            role="listitem"
+            className="px-2.5 py-1 rounded-lg text-xs font-mono border cursor-default
+                       bg-[#1E3A5F08] dark:bg-[#1E3A5F22]
+                       border-[#1E3A5F1A] dark:border-[#2A529844]
+                       text-[#1E3A5F] dark:text-[#9CB8D9]
+                       hover:bg-[#1E3A5F15] dark:hover:bg-[#1E3A5F33]
+                       hover:text-[#0A0A0A] dark:hover:text-white
+                       hover:-translate-y-0.5 transition-all duration-150"
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+
+      {/* Bottom accent */}
+      <div
+        className="mt-auto h-px rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(to right, #1E3A5F, transparent)' }}
+        aria-hidden="true"
+      />
+    </div>
+  )
 }
 
 export default function Skills() {
   const [ref, inView] = useInView()
 
   return (
-    <section id="skills" className="py-24 relative" aria-labelledby="skills-heading">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, #0099CC04 0%, transparent 70%)' }}
-      />
+    <section id="skills" className="py-24 relative overflow-hidden" aria-labelledby="skills-heading">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#1E3A5F] opacity-[0.03] blur-3xl" />
+      </div>
 
       <div
         ref={ref}
@@ -53,49 +103,16 @@ export default function Skills() {
             <span className="gradient-text">I work with.</span>
           </h2>
           <p className="body-text mt-4 max-w-2xl mx-auto">
-            Focused on mobile development, software engineering, and cybersecurity. No fake
-            percentages — just the technologies I'm learning and using.
+            Focused on mobile development, software engineering, and cybersecurity.
+            No fake percentages — just the technologies I'm learning and using.
           </p>
           <div className="section-divider" aria-hidden="true" />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Skills by category">
-          {skills.map((group) => {
-            const Icon = iconMap[group.icon]
-            const c = colorMap[group.color] || colorMap['#00E5FF']
-
-            return (
-              <div key={group.category} role="listitem" className="glass-card-hover p-6">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-xl ${c.bg} ${c.border} border flex items-center justify-center`}>
-                    {Icon && <Icon size={18} className={c.text} aria-hidden="true" />}
-                  </div>
-                  <h3 className="font-semibold text-slate-800 dark:text-white">{group.category}</h3>
-                </div>
-
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2" role="list" aria-label={`${group.category} skills`}>
-                  {group.items.map((skill) => (
-                    <span
-                      key={skill}
-                      role="listitem"
-                      className={`px-2.5 py-1 rounded-lg text-xs font-mono border cursor-default hover:brightness-110 transition-all duration-200 ${c.badge}`}
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Accent line */}
-                <div
-                  className="mt-4 h-0.5 rounded-full opacity-30"
-                  style={{ background: `linear-gradient(to right, ${c.line}, transparent)` }}
-                  aria-hidden="true"
-                />
-              </div>
-            )
-          })}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" role="list" aria-label="Skills by category">
+          {skills.map((group, idx) => (
+            <SkillCard key={group.category} group={group} idx={idx} />
+          ))}
         </div>
       </div>
     </section>

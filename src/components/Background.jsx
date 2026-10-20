@@ -18,11 +18,12 @@ export default function Background({ darkMode }) {
     let animId
 
     function draw() {
-      // Trail color adapts to mode
-      ctx.fillStyle = darkMode ? 'rgba(11,15,26,0.05)' : 'rgba(255,255,255,0.05)'
+      // trail fade — dark mode = near-black, light = near-white
+      ctx.fillStyle = darkMode ? 'rgba(10,10,10,0.05)' : 'rgba(255,255,255,0.06)'
       ctx.fillRect(0, 0, w, h)
 
-      ctx.fillStyle = darkMode ? '#00E5FF' : '#0099CC'
+      // characters — dark blue accent in both modes
+      ctx.fillStyle = darkMode ? '#1E3A5F' : '#2A5298'
       ctx.font = '13px JetBrains Mono, monospace'
 
       drops.forEach((y, i) => {
@@ -37,15 +38,15 @@ export default function Background({ darkMode }) {
 
     draw()
 
-    const handleResize = () => {
+    const onResize = () => {
       w = canvas.width = window.innerWidth
       h = canvas.height = window.innerHeight
     }
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', onResize)
 
     return () => {
       cancelAnimationFrame(animId)
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', onResize)
     }
   }, [darkMode])
 
@@ -54,7 +55,7 @@ export default function Background({ darkMode }) {
       ref={canvasRef}
       id="bg-canvas"
       aria-hidden="true"
-      style={{ opacity: darkMode ? 0.03 : 0.025 }}
+      style={{ opacity: darkMode ? 0.04 : 0.025 }}
     />
   )
 }

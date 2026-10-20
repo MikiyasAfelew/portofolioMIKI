@@ -1,47 +1,95 @@
 import { Smartphone, Home, Users, ShieldCheck, ArrowRight } from 'lucide-react'
 import { services } from '../data/portfolio'
 import { useInView } from '../hooks/useInView'
+import { useTilt } from '../hooks/useTilt'
 
 const iconMap = { Smartphone, Home, Users, ShieldCheck }
 
-const colorMap = {
-  '#00E5FF': {
-    bg:     'bg-[#0099CC11] dark:bg-[#00E5FF11]',
-    border: 'border-[#0099CC33] dark:border-[#00E5FF33]',
-    hover:  'hover:border-[#0099CC66] dark:hover:border-[#00E5FF66]',
-    text:   'text-[#0077AA] dark:text-[#00E5FF]',
-    shadow: 'rgba(0,153,204,0.12)',
-  },
-  '#8B5CF6': {
-    bg:     'bg-[#7C3AED11] dark:bg-[#8B5CF611]',
-    border: 'border-[#7C3AED33] dark:border-[#8B5CF633]',
-    hover:  'hover:border-[#7C3AED66] dark:hover:border-[#8B5CF666]',
-    text:   'text-[#6D28D9] dark:text-[#8B5CF6]',
-    shadow: 'rgba(124,58,237,0.12)',
-  },
-  '#FF4D8D': {
-    bg:     'bg-[#e0396e11] dark:bg-[#FF4D8D11]',
-    border: 'border-[#e0396e33] dark:border-[#FF4D8D33]',
-    hover:  'hover:border-[#e0396e66] dark:hover:border-[#FF4D8D66]',
-    text:   'text-[#c0185a] dark:text-[#FF4D8D]',
-    shadow: 'rgba(224,57,110,0.12)',
-  },
+function ServiceCard({ service, idx }) {
+  const { ref, onMouseMove, onMouseLeave } = useTilt(6)
+  const Icon = iconMap[service.icon]
+
+  return (
+    <div
+      ref={ref}
+      role="listitem"
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="card-hover p-6 flex flex-col gap-5 group animate-fade-in-up"
+      style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
+    >
+      {/* Spotlight */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: 'radial-gradient(350px circle at var(--mouse-x,50%) var(--mouse-y,50%), rgba(30,58,95,0.07), transparent 60%)' }}
+        aria-hidden="true"
+      />
+
+      {/* Top strip */}
+      <div
+        className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl opacity-30 group-hover:opacity-80 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(to right, transparent, #1E3A5F, transparent)' }}
+        aria-hidden="true"
+      />
+
+      {/* Icon + number */}
+      <div className="flex items-start justify-between">
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center
+                     bg-[#1E3A5F0D] dark:bg-[#1E3A5F33]
+                     border border-[#1E3A5F1A] dark:border-[#2A529855]
+                     group-hover:bg-[#1E3A5F18] dark:group-hover:bg-[#1E3A5F44]
+                     group-hover:scale-110 transition-all duration-300"
+        >
+          {Icon && <Icon size={24} className="text-[#1E3A5F] dark:text-[#7BBFFF]" aria-hidden="true" />}
+        </div>
+        <span className="text-xs font-mono font-bold text-slate-200 dark:text-white/[0.07] select-none">
+          0{idx + 1}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 space-y-2">
+        <h3 className="font-bold text-[#0A0A0A] dark:text-white text-base
+                       group-hover:text-[#1E3A5F] dark:group-hover:text-[#7BBFFF] transition-colors duration-200">
+          {service.title}
+        </h3>
+        <p className="text-sm text-[#4A5568] dark:text-[#9CA3AF] leading-relaxed">
+          {service.description}
+        </p>
+      </div>
+
+      {/* CTA */}
+      <button
+        onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+        className="flex items-center gap-2 text-sm font-mono font-semibold w-fit
+                   text-[#1E3A5F] dark:text-[#7BBFFF]
+                   hover:gap-3 transition-all duration-200"
+        aria-label={`Get in touch about ${service.title}`}
+      >
+        Get in touch
+        <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
+      </button>
+
+      {/* Bottom glow */}
+      <div
+        className="absolute bottom-0 left-6 right-6 h-px opacity-0 group-hover:opacity-50 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(to right, transparent, #1E3A5F, transparent)' }}
+        aria-hidden="true"
+      />
+    </div>
+  )
 }
 
 export default function Services() {
   const [ref, inView] = useInView()
-  const scrollToContact = () => {
-    const el = document.querySelector('#contact')
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
 
   return (
-    <section id="services" className="py-24 relative" aria-labelledby="services-heading">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, #8B5CF605 0%, transparent 70%)' }}
-      />
+    <section id="services" className="py-24 relative overflow-hidden" aria-labelledby="services-heading">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#1E3A5F] opacity-[0.04] blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-[#1E3A5F] opacity-[0.03] blur-3xl" />
+      </div>
 
       <div
         ref={ref}
@@ -60,36 +108,8 @@ export default function Services() {
           <div className="section-divider" aria-hidden="true" />
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list" aria-label="Services">
-          {services.map((service) => {
-            const Icon = iconMap[service.icon]
-            const c = colorMap[service.color] || colorMap['#00E5FF']
-
-            return (
-              <div
-                key={service.title}
-                role="listitem"
-                className={`glass-card border ${c.border} ${c.hover} p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 group`}
-              >
-                <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.border} border flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  {Icon && <Icon size={22} className={c.text} aria-hidden="true" />}
-                </div>
-
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-800 dark:text-white mb-2">{service.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-[#8A94A8] leading-relaxed">{service.description}</p>
-                </div>
-
-                <button
-                  onClick={scrollToContact}
-                  className={`flex items-center gap-1.5 text-sm ${c.text} font-mono hover:gap-3 transition-all duration-200`}
-                  aria-label={`Get in touch about ${service.title}`}
-                >
-                  Get in touch <ArrowRight size={14} aria-hidden="true" />
-                </button>
-              </div>
-            )
-          })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" role="list" aria-label="Services">
+          {services.map((s, idx) => <ServiceCard key={s.title} service={s} idx={idx} />)}
         </div>
       </div>
     </section>

@@ -1,49 +1,153 @@
 import { useState } from 'react'
-import { GitFork, ExternalLink, Star } from 'lucide-react'
+import { GitFork, ExternalLink, Star, Folder } from 'lucide-react'
 const Github = GitFork
 import { projects } from '../data/portfolio'
 import { useInView } from '../hooks/useInView'
+import { useTilt } from '../hooks/useTilt'
 
 const filters = ['All', 'Mobile', 'Security', 'Web']
 
-const statusColors = {
-  'In Progress': 'text-amber-600 dark:text-yellow-400 bg-amber-50 dark:bg-yellow-400/10 border-amber-200 dark:border-yellow-400/20',
-  Completed:     'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-400/10 border-green-200 dark:border-green-400/20',
-}
+function ProjectCard({ project, idx }) {
+  const { ref, onMouseMove, onMouseLeave } = useTilt(5)
+  const isInProgress = project.status === 'In Progress'
 
-const categoryColors = {
-  Mobile:   'bg-[#0099CC11] dark:bg-[#00E5FF11] text-[#0077AA] dark:text-[#00E5FF] border-[#0099CC33] dark:border-[#00E5FF33]',
-  Security: 'bg-[#e0396e11] dark:bg-[#FF4D8D11] text-[#c0185a] dark:text-[#FF4D8D] border-[#e0396e33] dark:border-[#FF4D8D33]',
-  Web:      'bg-[#7C3AED11] dark:bg-[#8B5CF611] text-[#6D28D9] dark:text-[#8B5CF6] border-[#7C3AED33] dark:border-[#8B5CF633]',
-}
+  return (
+    <article
+      ref={ref}
+      role="listitem"
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="card-hover flex flex-col overflow-hidden group animate-fade-in-up"
+      style={{ animationDelay: `${idx * 80}ms`, animationFillMode: 'both' }}
+    >
+      {/* Spotlight */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: 'radial-gradient(350px circle at var(--mouse-x,50%) var(--mouse-y,50%), rgba(30,58,95,0.08), transparent 60%)' }}
+        aria-hidden="true"
+      />
 
-// Map data color → light/dark versions
-const accentLine = {
-  '#00E5FF': '#0099CC',
-  '#8B5CF6': '#7C3AED',
-  '#FF4D8D': '#e0396e',
+      {/* Top bar */}
+      <div
+        className="h-1.5 w-full flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(90deg, #1E3A5F, #2A5298 60%, transparent)' }}
+        aria-hidden="true"
+      />
+
+      <div className="p-6 flex flex-col flex-1 gap-4">
+
+        {/* Meta row */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-full border
+                           bg-[#1E3A5F08] dark:bg-[#1E3A5F22]
+                           border-[#1E3A5F1A] dark:border-[#2A529844]
+                           text-[#1E3A5F] dark:text-[#9CB8D9]">
+            <Folder size={10} aria-hidden="true" />
+            {project.category}
+          </span>
+          <div className="flex items-center gap-2">
+            {project.featured && (
+              <span className="flex items-center gap-1 text-xs font-mono
+                               text-[#1E3A5F] dark:text-[#7BBFFF]
+                               bg-[#1E3A5F0D] dark:bg-[#1E3A5F33]
+                               border border-[#1E3A5F22] dark:border-[#2A529855]
+                               px-2 py-0.5 rounded-full">
+                <Star size={9} fill="currentColor" aria-hidden="true" /> Featured
+              </span>
+            )}
+            <span className={`inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-full border ${
+              isInProgress
+                ? 'text-[#1E3A5F] dark:text-[#7BBFFF] bg-[#1E3A5F0D] dark:bg-[#1E3A5F2A] border-[#1E3A5F22] dark:border-[#2A529855]'
+                : 'text-[#0A0A0A] dark:text-white bg-[#0A0A0A0D] dark:bg-white/[0.07] border-[#0A0A0A1A] dark:border-white/10'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isInProgress ? 'bg-[#1E3A5F] dark:bg-[#7BBFFF] animate-pulse' : 'bg-[#0A0A0A] dark:bg-white'}`} aria-hidden="true" />
+              {project.status}
+            </span>
+          </div>
+        </div>
+
+        {/* Title block */}
+        <div className="flex items-start gap-3">
+          <div
+            className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5
+                       bg-[#1E3A5F0D] dark:bg-[#1E3A5F33]
+                       border border-[#1E3A5F1A] dark:border-[#2A529844]"
+            aria-hidden="true"
+          >
+            <Github size={14} className="text-[#1E3A5F] dark:text-[#7BBFFF]" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[#0A0A0A] dark:text-white leading-tight
+                           group-hover:text-[#1E3A5F] dark:group-hover:text-[#7BBFFF] transition-colors duration-200">
+              {project.title}
+            </h3>
+            <p className="text-xs text-[#6B7280] font-mono mt-0.5">{project.tags[0]}</p>
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-[#4A5568] dark:text-[#9CA3AF] leading-relaxed">
+          {project.description}
+        </p>
+
+        {/* Tech tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2.5 py-1 rounded-lg text-xs font-mono border cursor-default
+                         bg-[#1E3A5F08] dark:bg-[#1E3A5F1A]
+                         border-[#1E3A5F15] dark:border-[#2A529833]
+                         text-[#1E3A5F] dark:text-[#9CB8D9]
+                         hover:-translate-y-0.5 transition-transform duration-150"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4 mt-auto pt-3 border-t border-slate-100 dark:border-white/[0.05]">
+          <a
+            href={project.github} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-mono
+                       text-[#6B7280] hover:text-[#1E3A5F] dark:hover:text-white
+                       transition-colors duration-200"
+            aria-label={`View ${project.title} on GitHub`}
+          >
+            <Github size={13} aria-hidden="true" /> View source
+          </a>
+          <a
+            href={project.github} target="_blank" rel="noopener noreferrer"
+            className="ml-auto flex items-center gap-1.5 text-xs font-mono font-semibold
+                       text-[#1E3A5F] dark:text-[#7BBFFF]
+                       hover:gap-2.5 transition-all duration-200"
+            aria-label={`Open ${project.title}`}
+          >
+            Open project <ExternalLink size={11} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </article>
+  )
 }
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState('All')
   const [ref, inView] = useInView()
 
-  const filtered =
-    activeFilter === 'All'
-      ? projects
-      : projects.filter(
-          (p) =>
-            p.category === activeFilter ||
-            p.tags.some((t) => t.toLowerCase() === activeFilter.toLowerCase())
-        )
+  const filtered = activeFilter === 'All'
+    ? projects
+    : projects.filter(p =>
+        p.category === activeFilter ||
+        p.tags.some(t => t.toLowerCase() === activeFilter.toLowerCase())
+      )
 
   return (
-    <section id="projects" className="py-24 relative" aria-labelledby="projects-heading">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, #8B5CF605 0%, transparent 70%)' }}
-      />
+    <section id="projects" className="py-24 relative overflow-hidden" aria-labelledby="projects-heading">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute bottom-0 right-0 w-80 h-64 rounded-full bg-[#1E3A5F] opacity-[0.04] blur-3xl" />
+      </div>
 
       <div
         ref={ref}
@@ -57,7 +161,7 @@ export default function Projects() {
             Projects that show <span className="gradient-text">my growth.</span>
           </h2>
           <p className="body-text mt-4 max-w-2xl mx-auto">
-            A selection of personal and academic projects. Focused on mobile, security, and practical software.
+            Personal and academic projects focused on mobile, security, and practical software.
           </p>
           <div className="section-divider" aria-hidden="true" />
         </div>
@@ -68,10 +172,10 @@ export default function Projects() {
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`px-4 py-2 rounded-full text-sm font-mono transition-all duration-200 border ${
+              className={`px-5 py-2 rounded-full text-sm font-mono transition-all duration-200 border ${
                 activeFilter === f
-                  ? 'bg-[#0099CC] dark:bg-[#00E5FF] text-white dark:text-[#0B0F1A] border-[#0099CC] dark:border-[#00E5FF] font-semibold'
-                  : 'text-slate-500 dark:text-[#8A94A8] border-slate-200 dark:border-white/10 hover:border-[#0099CC44] dark:hover:border-[#00E5FF44] hover:text-[#0099CC] dark:hover:text-[#00E5FF]'
+                  ? 'bg-[#1E3A5F] dark:bg-[#1E3A5F] text-white border-[#1E3A5F] font-semibold shadow-[0_0_16px_rgba(30,58,95,0.35)]'
+                  : 'text-[#6B7280] dark:text-[#9CA3AF] border-slate-200 dark:border-white/[0.08] hover:border-[#1E3A5F44] dark:hover:border-white/20 hover:text-[#1E3A5F] dark:hover:text-white hover:bg-[#1E3A5F06]'
               }`}
               aria-pressed={activeFilter === f}
             >
@@ -81,78 +185,10 @@ export default function Projects() {
         </div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Projects">
-          {filtered.map((project) => {
-            const lightColor = accentLine[project.color] || project.color
-            return (
-              <article key={project.title} role="listitem" className="glass-card-hover flex flex-col overflow-hidden group">
-                {/* Top bar */}
-                <div
-                  className="h-1 w-full"
-                  style={{ background: `linear-gradient(to right, ${lightColor}, transparent)` }}
-                  aria-hidden="true"
-                />
-
-                <div className="p-6 flex flex-col flex-1 gap-4">
-                  {/* Meta */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className={`text-xs font-mono px-2.5 py-1 rounded-full border ${categoryColors[project.category] || categoryColors['Web']}`}>
-                      {project.category}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {project.featured && (
-                        <span className="flex items-center gap-1 text-xs font-mono text-[#6D28D9] dark:text-[#8B5CF6] bg-[#7C3AED11] dark:bg-[#8B5CF611] border border-[#7C3AED33] dark:border-[#8B5CF633] px-2 py-0.5 rounded-full">
-                          <Star size={10} aria-hidden="true" /> Featured
-                        </span>
-                      )}
-                      <span className={`text-xs font-mono px-2.5 py-1 rounded-full border ${statusColors[project.status]}`}>
-                        {project.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title & desc */}
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-[#0099CC] dark:group-hover:text-[#00E5FF] transition-colors duration-200">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-[#8A94A8] leading-relaxed mt-2">
-                      {project.description}
-                    </p>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="skill-badge">{tag}</span>
-                    ))}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-3 mt-auto pt-2">
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-slate-400 dark:text-[#8A94A8] hover:text-slate-700 dark:hover:text-white transition-colors duration-200"
-                      aria-label={`View ${project.title} on GitHub (opens in new tab)`}
-                    >
-                      <Github size={15} aria-hidden="true" /> GitHub
-                    </a>
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-sm text-[#0099CC] dark:text-[#00E5FF] hover:underline ml-auto"
-                      aria-label={`View details for ${project.title} (opens in new tab)`}
-                    >
-                      View Details <ExternalLink size={13} aria-hidden="true" />
-                    </a>
-                  </div>
-                </div>
-              </article>
-            )
-          })}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" role="list" aria-label="Projects">
+          {filtered.map((project, idx) => (
+            <ProjectCard key={project.title} project={project} idx={idx} />
+          ))}
         </div>
 
         {/* See all */}
@@ -163,8 +199,9 @@ export default function Projects() {
             rel="noopener noreferrer"
             className="btn-outline inline-flex items-center gap-2"
           >
-            <Github size={16} aria-hidden="true" />
+            <Github size={14} aria-hidden="true" />
             See all projects on GitHub
+            <ExternalLink size={12} className="opacity-60" aria-hidden="true" />
           </a>
         </div>
       </div>
