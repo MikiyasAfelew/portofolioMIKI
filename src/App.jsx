@@ -22,22 +22,16 @@ export default function App() {
     }
   }, [darkMode])
 
-  return (
-    <div
-      className={`relative ${
-        darkMode
-          ? 'bg-[#0B0F1A] text-[#E6EAF2]'
-          : 'bg-[#f0f4ff] text-[#0B0F1A]'
-      } min-h-screen transition-colors duration-300`}
-    >
-      {/* Animated code-rain background */}
-      <Background />
+  const toggleDark = () => setDarkMode((d) => !d)
 
-      {/* Main content */}
+  return (
+    <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-[#0B0F1A] text-slate-800 dark:text-[#E6EAF2]">
+      <Background darkMode={darkMode} />
+
       <div className="relative z-10">
-        <Navbar darkMode={darkMode} toggleDark={() => setDarkMode(!darkMode)} />
+        <Navbar darkMode={darkMode} toggleDark={toggleDark} />
         <main id="main-content">
-          <Hero />
+          <Hero darkMode={darkMode} />
           <About />
           <Education />
           <Experience />
