@@ -1,0 +1,26 @@
+{
+  "name": "portofoliomiki",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && npx gh-pages -d dist"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "framer-motion": "^14.4.0",
+    "lucide-react": "^1.60.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
