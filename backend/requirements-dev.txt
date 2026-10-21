@@ -1,11 +1,11 @@
 # Development / test requirements — no PostgreSQL build deps needed
 # Uses SQLite (aiosqlite) for local dev and tests
 
-fastapi==0.115.5
+fastapi==0.143.3
 uvicorn[standard]==0.32.1
 
 # Database — SQLite only for local dev
-sqlalchemy==2.0.36
+sqlalchemy==2.1.5
 alembic==1.14.0
 aiosqlite==0.20.0
 
@@ -15,7 +15,7 @@ pydantic-settings>=2.5.0
 email-validator>=2.2.0
 
 # Auth & security
-python-jose[cryptography]==3.3.0
+python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 
 # HTTP client
