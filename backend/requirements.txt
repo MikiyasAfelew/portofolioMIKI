@@ -39,7 +39,7 @@ pytest-cov==6.0.0
 
 # Linting / formatting
 ruff==0.8.4
-black==24.10.0
+black==26.10.1
 
 # Security scanning (dev/CI)
 bandit==1.8.0
