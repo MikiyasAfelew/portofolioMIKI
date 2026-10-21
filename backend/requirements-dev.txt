@@ -7,7 +7,7 @@ uvicorn[standard]==0.32.1
 # Database — SQLite only for local dev
 sqlalchemy==2.0.36
 alembic==1.14.0
-aiosqlite==0.20.0
+aiosqlite==0.22.1
 
 # Validation — use latest pydantic with pre-built wheels
 pydantic>=2.9.0

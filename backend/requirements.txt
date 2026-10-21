@@ -7,7 +7,7 @@ gunicorn==23.0.0
 sqlalchemy==2.0.36
 alembic==1.14.0
 asyncpg==0.30.0           # PostgreSQL async driver
-aiosqlite==0.20.0         # SQLite async driver (tests/dev)
+aiosqlite==0.22.1         # SQLite async driver (tests/dev)
 psycopg2-binary==2.9.10   # Alembic sync driver
 
 # Validation
