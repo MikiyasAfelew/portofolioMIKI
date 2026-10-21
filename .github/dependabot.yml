@@ -1,0 +1,45 @@
+version: 2
+
+updates:
+  # Python backend dependencies
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+    reviewers:
+      - MikiyasAfelew
+    labels:
+      - dependencies
+      - security
+    open-pull-requests-limit: 10
+    groups:
+      security-updates:
+        patterns:
+          - "cryptography"
+          - "python-jose"
+          - "passlib"
+          - "argon2-cffi"
+          - "fastapi"
+          - "sqlalchemy"
+
+  # Frontend npm dependencies
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    reviewers:
+      - MikiyasAfelew
+    labels:
+      - dependencies
+    open-pull-requests-limit: 10
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - github-actions
