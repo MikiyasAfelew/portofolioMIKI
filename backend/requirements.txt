@@ -27,7 +27,7 @@ httpx==0.28.1
 redis==5.2.1
 
 # File handling
-python-multipart==0.0.18
+python-multipart==0.0.32
 
 # Utilities
 python-dotenv==1.0.1
